@@ -83,7 +83,7 @@ Mod.require 'Weya.Base',
    @listen 'structuredChange', (value, changed) ->
     @elems.previewMain.innerHTML = ''
     @model = value if changed?
-    console.log @model.html()
+    #console.log @model.html()
     @model.render @elems.previewMain
 
    @listen 'indent', ->
@@ -107,11 +107,11 @@ Mod.require 'Weya.Base',
      @elems.errors.textContent = e.message
      return
 
-    console.log res.score
-    console.log res.value
-    for e in res.errors
-     console.error e
-    console.log @model.html()
+    #console.log res.score
+    #console.log res.value
+    #for e in res.errors
+    # console.error e
+    #console.log @model.html()
 
     @elems.errors.textContent = ''
     @model.render @elems.previewMain
