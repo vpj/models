@@ -72,25 +72,30 @@ Edit
 
        render: ->
         schema = @property.schema
+        width = 2 + Math.round schema.columns * 7.25
         Weya elem: @elems.parent, context: this, ->
          if schema.rows is 1
           @$.elems.input = @input '.value',
            type: 'text'
            style:
-            width: "#{2 + Math.round schema.columns * 7.25}px"
+            width: "#{width}px"
          else
           @$.elems.input = @textarea '.value',
            rows: schema.rows
            columns: schema.columns
            style:
-            width: "#{2 + Math.round schema.columns * 7.25}px"
+            width: "#{width}px"
             height: "#{Math.round schema.rows * 18}px"
 
-         @$.elems.search = @div '.search', style: {display: 'none'}
+         @$.elems.search = @div '.search',
+          style:
+           display: 'none'
+           width: "#{width}px"
 
         @elems.input.value = @value
         @elems.input.addEventListener "input", @on.change
         @elems.input.addEventListener "focus", @on.focus
+        @elems.input.addEventListener "blur", @on.blur
         @elems.search.addEventListener 'click', @on.searchClick
 
        search: ->
@@ -123,8 +128,11 @@ Edit
         @elems.input.value = result
         @on.change()
 
-       @listen 'focus', (e) ->
-        @search()
+       @listen 'focus', (e) -> @search()
+       @listen 'blur', (e) ->
+        setTimeout =>
+         @elems.search.style.display = 'none'
+        , 100
 
        @listen 'change', (e) ->
         @search()
