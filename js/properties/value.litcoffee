@@ -31,10 +31,7 @@ Class
         else
          return true
 
-       @default 'search', (str) ->
-        if (typeof str) isnt 'string'
-         throw new Error "Exected string: #{typeof str}, #{str}"
-        return str
+       @default 'search', (str) -> null
 
        @default 'default', -> ''
 
@@ -88,11 +85,49 @@ Edit
            style:
             width: "#{2 + Math.round schema.columns * 7.25}px"
             height: "#{Math.round schema.rows * 18}px"
+
+         @$.elems.search = @div '.search', style: {display: 'none'}
+
         @elems.input.value = @value
         @elems.input.addEventListener "input", @on.change
+        @elems.input.addEventListener "focus", @on.focus
+        @elems.search.addEventListener 'click', @on.searchClick
+
+       search: ->
+        value = @elems.input.value
+        results = @property.schema.search.call @property, value
+        return if not results?
+        return if not Array.isArray results
+
+        if results.length is 0
+         @elems.search.style.display = 'none'
+         return
+
+        @elems.search.style.display = 'block'
+        @elems.search.innerHTML = ''
+        Weya elem: @elems.search, ->
+         for r in results
+          e = @div r
+          e._result = r
+
+       @listen 'searchClick', (e) ->
+        n = e.target
+        result = null
+        while n? and n isnt @elems.search
+         if n._result
+          result = n._result
+          break
+         n = n.parentNode
+
+        return if not result?
+        @elems.input.value = result
+        @on.change()
+
+       @listen 'focus', (e) ->
+        @search()
 
        @listen 'change', (e) ->
-        #TODO validate
+        @search()
         value = @elems.input.value
         if not @property.schema.valid.call @property, value
          @elems.input.classList.add 'invalid'
