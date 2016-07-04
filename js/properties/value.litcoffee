@@ -97,6 +97,7 @@ Edit
         @elems.input.addEventListener "focus", @on.focus
         @elems.input.addEventListener "blur", @on.blur
         @elems.search.addEventListener 'click', @on.searchClick
+        @change()
 
        search: ->
         value = @elems.input.value
@@ -126,7 +127,8 @@ Edit
 
         return if not result?
         @elems.input.value = result
-        @on.change()
+        @elems.search.style.display = 'none'
+        @change()
 
        @listen 'focus', (e) -> @search()
        @listen 'blur', (e) ->
@@ -136,6 +138,9 @@ Edit
 
        @listen 'change', (e) ->
         @search()
+        @change()
+
+       change: ->
         value = @elems.input.value
         if not @property.schema.valid.call @property, value
          @elems.input.classList.add 'invalid'
