@@ -112,9 +112,11 @@ Edit
         @elems.search.style.display = 'block'
         @elems.search.innerHTML = ''
         Weya elem: @elems.search, ->
-         for r in results
+         for r, i in results
+          break if i > 10
           e = @div r
           e._result = r
+
 
        @listen 'searchClick', (e) ->
         n = e.target
