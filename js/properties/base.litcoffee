@@ -10,6 +10,7 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 Class
 
       class Base
+       propertyType: 'base'
        _defaults: {}
 
        @extend: ->

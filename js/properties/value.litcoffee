@@ -15,6 +15,8 @@ Class
       class Value extends Base
        @extend()
 
+       propertyType: 'value'
+
        @default 'value', (str) ->
         if (typeof str) isnt 'string'
          throw new Error "Exected string: #{typeof str}, #{str}"

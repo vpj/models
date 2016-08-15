@@ -222,7 +222,7 @@ Check properties
         @_editElems = {}
         Weya elem: elem, context: this, ->
          for name, prop of @$._properties
-          @div ".property", ->
+          @div ".property.property-type-#{prop.propertyType}", ->
            @span ".property-name", name
            @$._editElems[name] = @div ".property-value", ""
 

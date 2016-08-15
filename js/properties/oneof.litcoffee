@@ -16,6 +16,8 @@ Class
       class OneOf extends Base
        @extend()
 
+       propertyType: 'oneof'
+
        @default 'oneof', ['Null']
        @default 'default', ->
         return null if @schema.oneof.length is 0

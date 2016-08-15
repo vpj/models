@@ -14,6 +14,8 @@ Class
       class List extends Base
        @extend()
 
+       propertyType: 'list'
+
        @default 'list', {}
 
        @default 'default', -> []
