@@ -27,9 +27,6 @@
    color: #aaa;
    width: 30px;
   }
-  .fa-print {
-   //float: right;
-  }
   border-bottom: 1px solid #eee;
   padding-bottom: 3px;
   margin-bottom: 3px;
@@ -87,15 +84,128 @@
  font-size: 12px;
  //font-family: monospace;
  overflow-x: scroll;
+ background: #edeef0;
+ padding: 16px;
 
+ .property.property-type-list {
+  &:hover {
+   >.property-name {
+    display: inline-block;
+   }
+  }
+
+  >.property-name {
+   vertical-align: top;
+   margin-right: 3px;
+   color: #666;
+   line-height: 24px;
+   height: 24px;
+   font-weight: bold;
+   font-size: 14px;
+   cursor: default;
+   display: inline-block;
+   float: none;
+   //text-decoration: underline;
+   margin-top: 10px;
+  }
+  >.property-value {
+   display: block;
+   margin-top: -18px;
+   margin-left: 32px;
+   >.list-controls {
+    text-align: right;
+    i {
+     color: #999;
+     cursor: pointer;
+     font-size: 18px;
+     &:hover {
+      color: #222;
+     }
+    }
+   }
+   .list {
+    .list-item {
+     .list-item-controls-hover {
+      i {
+       font-size: 19px;
+       padding: 5px;
+       color: #999;
+       cursor: pointer;
+       &:hover {
+        color: #222;
+       }
+      }
+      position: relative;
+      float: left;
+      margin-left: -32px;
+      &:hover {
+       .list-item-controls {
+        display: block;
+        position: absolute;
+       }
+      }
+     }
+     .list-item-controls {
+      display: none;
+      .drop-shadow(1px, 1px, 5px, 0.4);
+      background: #fff;
+      z-index: 1000;
+      padding: 5px;
+      margin-top: -24px;
+      i {
+       padding: 0 5px;
+       color: #333;
+       cursor: pointer;
+       &:hover {
+        color: #666;
+       }
+      }
+      .fa-trash {
+       margin-left: 20px;
+       color: red;
+      }
+     }
+    }
+   }
+
+  }
+ }
+ .property.property-type-value {
+  >.property-value {
+   margin-bottom: 8px;
+   .drop-shadow(0,1px,2px,.1);
+   background: white;
+   >input {
+    padding: 16px;
+    height: auto;
+    color: rgba(0,0,0,0.88);
+    font-weight: 500;
+   }
+   >textarea {
+    padding: 16px;
+    color: rgba(0,0,0,0.88);
+    font-weight: 500;
+   }
+  }
+  >.property-name {
+   line-height: 18px;
+   padding: 16px;
+  }
+ }
+ .property.property-type-oneof {
+  >.property-name {
+   line-height: 18px;
+   padding: 8px 20px 8px 0px;
+  }
+ }
  .property {
   white-space: nowrap;
   &:hover {
-   .property-name {
+   >.property-name {
     display: block;
    }
   }
-  .property-name {
+  >.property-name {
    vertical-align: top;
    margin-right: 3px;
    color: #999;
@@ -106,6 +216,7 @@
    float: right;
    z-index: 1000;
    position: relative;
+   text-transform: uppercase;
   }
   .search {
    position: absolute;
@@ -117,7 +228,7 @@
     cursor: pointer;
    }
   }
-  .property-value {
+  >.property-value {
    vertical-align: top;
    display: block;
    .value {
@@ -136,71 +247,22 @@
    .value.invalid {
     background: #ffcccc;
    }
-   .oneof-controls {
-    select {
-     cursor: pointer;
-     font-family: monospace;
-     line-height: 18px;
-     height: 18px;
-     font-size: 12px;
-     margin: 0;
-     border: none;
-     outline: none;
-     padding: 0;
-     font-style: italic;
-     color: #999;
-     font-weight: bold;
-    }
-   }
-   .list-controls {
-    i {
-     color: #999;
-     cursor: pointer;
-     &:hover {
-      color: #222;
-     }
-    }
-   }
-   .list {
-    .list-item {
-     .list-item-controls-hover {
-      i {
-       padding: 0 5px;
-       color: #999;
-       cursor: pointer;
-       &:hover {
-        color: #222;
-       }
-      }
-      position: relative;
-      float: left;
-      margin-left: -20px;
-      &:hover {
-       .list-item-controls {
-        display: block;
-        position: absolute;
-       }
-      }
-     }
-     .list-item-controls {
-      display: none;
-      .drop-shadow(1px, 1px, 5px, 0.4);
-      background: #fff;
-      z-index: 1000;
-      i {
-       padding: 0 5px;
-       color: #333;
-       cursor: pointer;
-       &:hover {
-        color: #666;
-       }
-      }
-      .fa-trash {
-       margin-left: 20px;
-       color: red;
-      }
-     }
-    }
+  }
+  .oneof-controls { //For both one of property and list items
+   margin-bottom: 8px;
+   .drop-shadow(0,1px,2px,.1);
+   select {
+    cursor: pointer;
+    line-height: 18px;
+    height: auto;
+    padding: 8px;
+    font-size: 14px;
+    margin: 0;
+    border: none;
+    outline: none;
+    color: #999;
+    font-weight: bold;
+    width: 100% !important;
    }
   }
  }
