@@ -85,46 +85,40 @@
 
 .structured-editor {
  font-size: 12px;
- //font-family: monospace;
+ font-family: monospace;
  overflow-x: scroll;
 
  .property {
   white-space: nowrap;
-  &:hover {
-   .property-name {
-    display: block;
-   }
-  }
   .property-name {
    vertical-align: top;
+   display: inline-block;
    margin-right: 3px;
    color: #999;
    line-height: 18px;
    height: 18px;
    cursor: default;
-   display: none;
-   float: right;
-   z-index: 1000;
-   position: relative;
+   &:after {
+    content: ":";
+    color: red;
+   }
   }
   .search {
    position: absolute;
    .drop-shadow(1px, 1px, 5px, 0.4);
    padding: 1px 5px;
    background: #fff;
-   z-index: 1000;
    div {
     cursor: pointer;
    }
   }
   .property-value {
    vertical-align: top;
-   display: block;
+   display: inline-block;
    .value {
-    width: 100% !important;
     resize: none;
     background: #f8f8f8;
-    //font-family: monospace;
+    font-family: monospace;
     line-height: 18px;
     height: 18px;
     font-size: 12px;
