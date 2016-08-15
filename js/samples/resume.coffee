@@ -1,6 +1,12 @@
 Mod.require 'Models.Models',
  'Models.Model.Base'
  (MODELS, Base) ->
+  ROLES =
+   Vigilante: true
+   Programmer: true
+   Designer: true
+   Manager: true
+   Other: true
 
   class Resume extends Base
    @extend()
@@ -8,7 +14,12 @@ Mod.require 'Models.Models',
    type: 'Resume'
 
    @property 'name', {}
-   @property 'role', {}
+   @property 'role',
+    valid: (str) -> ROLES[str]
+    search: (str) ->
+     str = str.toLowerCase()
+     (id for id of ROLES when (id.toLowerCase().indexOf str) isnt -1)
+
    @property 'website', {}
 
    @property 'mobile', {}
