@@ -1,4 +1,4 @@
-Weya = require '../lib//weya/weya'
+Weya = require '../lib/weya/weya'
 
 template = ->
  @html ->
