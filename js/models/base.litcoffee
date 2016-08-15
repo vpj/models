@@ -71,7 +71,7 @@ Register a property
         if (typeof obj) isnt 'object'
          throw new Error "Property not an object: #{name}"
 
-        @::_properties[name] = PROPERTIES.create obj
+        @::_properties[name] = PROPERTIES.create obj, name
 
        @requireFunction: (name, desc) ->
         if (typeof name) is 'string'

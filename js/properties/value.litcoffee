@@ -79,6 +79,7 @@ Edit
          if schema.rows is 1
           @$.elems.input = @input '.value',
            type: 'text'
+           placeholder: @$.property._name
            style:
             width: "#{width}px"
          else

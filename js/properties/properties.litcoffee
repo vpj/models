@@ -23,10 +23,10 @@ class Properties
 
         return false
 
-       create: (schema) ->
+       create: (schema, name) ->
         for type, property of @properties
          if property.isValidSchema schema
-          return new property schema
+          return new property schema, name
 
         throw new Error "Unknown schema"
 

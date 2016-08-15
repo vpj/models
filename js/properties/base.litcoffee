@@ -26,7 +26,8 @@ Class
 
         return true
 
-       constructor: (schema) ->
+       constructor: (schema, name) ->
+        @_name = name
         @schema = {}
 
         for k, v of @_defaults
