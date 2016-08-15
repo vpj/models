@@ -139,7 +139,7 @@ Edit
        @listen 'blur', (e) ->
         setTimeout =>
          @elems.search.style.display = 'none'
-        , 100
+        , 400
 
        @listen 'change', (e) ->
         @search()
