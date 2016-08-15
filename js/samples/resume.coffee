@@ -28,7 +28,9 @@ Mod.require 'Models.Models',
     oneof: ['Null', 'Address']
 
    @property 'statement',
-    list: {}
+    list:
+     rows: 3
+     columns: 50
 
    @property 'timeline',
     list:
