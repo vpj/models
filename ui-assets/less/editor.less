@@ -88,14 +88,48 @@
  //font-family: monospace;
  overflow-x: scroll;
 
+ .property.property-type-list {
+  &:hover {
+   >.property-name {
+    display: inline-block;
+   }
+  }
+
+  >.property-name {
+   vertical-align: top;
+   margin-right: 3px;
+   color: #666;
+   line-height: 24px;
+   height: 24px;
+   font-weight: bold;
+   font-size: 14px;
+   cursor: default;
+   display: inline-block;
+   float: none;
+   text-decoration: underline;
+  }
+  >.property-value {
+   display: block;
+   margin-top: -18px;
+   margin-left: 20px;
+   >.list-controls {
+    text-align: right;
+   }
+  }
+ }
+ .property.property-type-value {
+  .property-value {
+   margin: 2px 0;
+  }
+ }
  .property {
   white-space: nowrap;
   &:hover {
-   .property-name {
+   >.property-name {
     display: block;
    }
   }
-  .property-name {
+  >.property-name {
    vertical-align: top;
    margin-right: 3px;
    color: #999;
@@ -117,7 +151,7 @@
     cursor: pointer;
    }
   }
-  .property-value {
+  >.property-value {
    vertical-align: top;
    display: block;
    .value {
