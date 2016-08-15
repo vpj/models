@@ -157,7 +157,9 @@ Edit
               icon = @i ".fa.fa-lg.fa-trash", null
               icon.listIdx = i
               icon.listAction = 'delete'
-           @$.elems.items.push @div ".list-item-content", null
+           @div ".list-item-content", ->
+            @div ".property.property-type-#{@$.property.item.propertyType}", ->
+             @$.elems.items.push @div ".property-value", null
 
         for v, i in @list
          @property.item.edit @elems.items[i], v, @itemChanged.bind self: this, idx: i

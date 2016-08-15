@@ -27,9 +27,6 @@
    color: #aaa;
    width: 30px;
   }
-  .fa-print {
-   //float: right;
-  }
   border-bottom: 1px solid #eee;
   padding-bottom: 3px;
   margin-bottom: 3px;
@@ -116,7 +113,56 @@
    margin-left: 20px;
    >.list-controls {
     text-align: right;
+    i {
+     color: #999;
+     cursor: pointer;
+     &:hover {
+      color: #222;
+     }
+    }
    }
+   .list {
+    .list-item {
+     .list-item-controls-hover {
+      i {
+       padding: 0 5px;
+       color: #999;
+       cursor: pointer;
+       &:hover {
+        color: #222;
+       }
+      }
+      position: relative;
+      float: left;
+      margin-left: -20px;
+      &:hover {
+       .list-item-controls {
+        display: block;
+        position: absolute;
+       }
+      }
+     }
+     .list-item-controls {
+      display: none;
+      .drop-shadow(1px, 1px, 5px, 0.4);
+      background: #fff;
+      z-index: 1000;
+      i {
+       padding: 0 5px;
+       color: #333;
+       cursor: pointer;
+       &:hover {
+        color: #666;
+       }
+      }
+      .fa-trash {
+       margin-left: 20px;
+       color: red;
+      }
+     }
+    }
+   }
+
   }
  }
  .property.property-type-value {
@@ -132,6 +178,10 @@
   >.property-name {
    line-height: 18px;
    padding: 16px;
+  }
+ }
+ .property.property-type-oneof {
+  >.property-value {
   }
  }
  .property {
@@ -183,71 +233,21 @@
    .value.invalid {
     background: #ffcccc;
    }
-   .oneof-controls {
-    select {
-     cursor: pointer;
-     font-family: monospace;
-     line-height: 18px;
-     height: 18px;
-     font-size: 12px;
-     margin: 0;
-     border: none;
-     outline: none;
-     padding: 0;
-     font-style: italic;
-     color: #999;
-     font-weight: bold;
-    }
-   }
-   .list-controls {
-    i {
-     color: #999;
-     cursor: pointer;
-     &:hover {
-      color: #222;
-     }
-    }
-   }
-   .list {
-    .list-item {
-     .list-item-controls-hover {
-      i {
-       padding: 0 5px;
-       color: #999;
-       cursor: pointer;
-       &:hover {
-        color: #222;
-       }
-      }
-      position: relative;
-      float: left;
-      margin-left: -20px;
-      &:hover {
-       .list-item-controls {
-        display: block;
-        position: absolute;
-       }
-      }
-     }
-     .list-item-controls {
-      display: none;
-      .drop-shadow(1px, 1px, 5px, 0.4);
-      background: #fff;
-      z-index: 1000;
-      i {
-       padding: 0 5px;
-       color: #333;
-       cursor: pointer;
-       &:hover {
-        color: #666;
-       }
-      }
-      .fa-trash {
-       margin-left: 20px;
-       color: red;
-      }
-     }
-    }
+  }
+  .oneof-controls { //For both one of property and list items
+   select {
+    cursor: pointer;
+    font-family: monospace;
+    line-height: 18px;
+    height: 18px;
+    font-size: 12px;
+    margin: 0;
+    border: none;
+    outline: none;
+    padding: 0;
+    font-style: italic;
+    color: #999;
+    font-weight: bold;
    }
   }
  }
