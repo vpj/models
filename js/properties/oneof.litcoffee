@@ -76,14 +76,15 @@ Edit
 
        render: ->
         Weya elem: @elems.parent, context: this, ->
-         @div ".oneof-controls", ->
+         @$.elems.controls = @div ".oneof-controls", ->
           @$.elems.type = @select on: {change: @$.on.typeChange}, ->
            for type in @$.property.schema.oneof
             @option value: type, type
 
          @$.elems.model = @div ".model", null
 
-        #@elems.add.addEventListener 'click', @addClicked.bind this
+        if @property.schema.oneof.length <= 1
+         @elems.controls.style.display = 'none'
 
         @renderModel()
 
