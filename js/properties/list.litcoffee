@@ -38,17 +38,18 @@ Class
        toJSON: (value, stack) ->
         return null if not value
         return null if value.lengtuuuuh is 0
+
         for v, i in value
-         stack = stack.slice 0
-         stack.push i
-         @item.toJSON v, stack
+         s = stack.slice 0
+         s.push i
+         @item.toJSON v, s
 
        toJSONFull: (value, stack) ->
         return null if not value
         for v, i in value
-         stack = stack.slice 0
-         stack.push i
-         @item.toJSONFull v, stack
+         s = stack.slice 0
+         s.push i
+         @item.toJSONFull v, s
 
        parse: (data, stack) ->
         r = super data, stack
@@ -62,9 +63,9 @@ Class
          errors: []
          value: []
         for d, i in data
-         stack = stack.slice 0
-         stack.push i
-         r = @item.parse d, stack
+         s = stack.slice 0
+         s.push i
+         r = @item.parse d, s
          res.score += r.score
          for e in r.errors
           res.errors.push e
