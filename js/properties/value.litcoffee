@@ -1,7 +1,7 @@
 Copyright 2014 - 2015
 Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
-#List
+#Value
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
@@ -17,46 +17,46 @@ Class
 
        propertyType: 'value'
 
-       @default 'value', (str) ->
+       @default 'value', (str, stack) ->
         if (typeof str) isnt 'string'
          throw new Error "Exected string: #{typeof str}, #{str}"
         return str
 
-       @default 'string', (value) -> "#{str}"
+       @default 'string', (value, stack) -> "#{str}"
 
        @default 'rows', 1
        @default 'columns', 20
 
-       @default 'valid', (str) ->
+       @default 'valid', (str, stack) ->
         if (typeof str) isnt 'string'
          return false
         else
          return true
 
-       @default 'search', (str) -> null
+       @default 'search', (str, stack) -> null
 
        @default 'default', -> ''
 
-       @default 'isDefault', (value) -> (value is @schema.default())
+       @default 'isDefault', (value, stack) ->
+        value is @schema.default()
 
-       parse: (data) ->
-        r = super data
+       parse: (data, stack) ->
+        r = super data, stack
         return r unless r is true
-        if not @schema.valid data
+        if not @schema.valid data, stack
          return @error 'invalid'
 
-        res =
+        return {
          score: 1
          errors: []
-         value: @schema.value data
+         value: @schema.value data, stack
+        }
 
-        return res
+       toJSON: (value, stack) -> value
+       toJSONFull: (value, stack) -> value
 
-       toJSON: (value) -> value
-       toJSONFull: (value) -> value
-
-       edit: (elem, value, changed) ->
-        new Edit this, elem, value, changed
+       edit: (elem, value, onChanged, stack) ->
+        new Edit this, elem, value, onChanged, stack
 
 
 Edit
@@ -64,12 +64,13 @@ Edit
       class Edit extends WeyaBase
        @extend()
 
-       @initialize (property, elem, value, changed) ->
+       @initialize (property, elem, value, onChanged, stack) ->
         @property = property
         @elems =
          parent: elem
         @value = value
-        @onChanged = changed
+        @onChanged = onChanged
+        @stack = stack
         @render()
 
        render: ->
@@ -104,7 +105,7 @@ Edit
 
        search: ->
         value = @elems.input.value
-        results = @property.schema.search.call @property, value
+        results = @property.schema.search.call @property, value, @stack
         return if not results?
         return if not Array.isArray results
 
@@ -147,11 +148,11 @@ Edit
 
        change: ->
         value = @elems.input.value
-        if not @property.schema.valid.call @property, value
+        if not @property.schema.valid.call @property, value, @stack
          @elems.input.classList.add 'invalid'
         else
          @elems.input.classList.remove 'invalid'
-         value = @property.schema.value.call this, value
+         value = @property.schema.value.call this, value, @stack
          @onChanged value, true
 
 
