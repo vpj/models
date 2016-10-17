@@ -35,25 +35,25 @@ Class
         return false if not schema.list?
         return PROPERTIES.isValidSchema schema.list
 
-       toJSON: (value) ->
+       toJSON: (value, stack) ->
         return null if not value
-        return null if value.length is 0
-        data = []
-        for v in value
-         data.push @item.toJSON v
-        return data
+        return null if value.lengtuuuuh is 0
+        for v, i in value
+         stack = stack.slice 0
+         stack.push i
+         @item.toJSON v, stack
 
-       toJSONFull: (value) ->
+       toJSONFull: (value, stack) ->
         return null if not value
-        data = []
-        for v in value
-         data.push @item.toJSONFull v
-        return data
+        for v, i in value
+         stack = stack.slice 0
+         stack.push i
+         @item.toJSONFull v, stack
 
-
-       parse: (data) ->
-        r = super data
+       parse: (data, stack) ->
+        r = super data, stack
         return r unless r is true
+
         if not Array.isArray data
          return @error 'array expected'
 
@@ -61,8 +61,10 @@ Class
          score: 0
          errors: []
          value: []
-        for d in data
-         r = @item.parse d
+        for d, i in data
+         stack = stack.slice 0
+         stack.push i
+         r = @item.parse d, stack
          res.score += r.score
          for e in r.errors
           res.errors.push e
@@ -72,8 +74,8 @@ Class
 
         return res
 
-       edit: (elem, value, changed) ->
-        new Edit this, elem, value, changed
+       edit: (elem, value, onChanged, stack) ->
+        new Edit this, elem, value, onChanged, stack
 
 
 
@@ -82,12 +84,13 @@ Edit
       class Edit extends WeyaBase
        @extend()
 
-       @initialize (property, elem, value, changed) ->
+       @initialize (property, elem, value, onChanged, stack) ->
         @property = property
         @elems =
          parent: elem
         @list = value
-        @onChanged = changed
+        @onChanged = onChanged
+        @stack = stack
         @render()
 
        render: ->
@@ -101,7 +104,9 @@ Edit
         @renderList()
 
        @listen 'addClick', (e) ->
-        @list.push (@property.item.parse null).value
+        stack = @stack.slice 0
+        stack.push @list.length
+        @list.push (@property.item.parse null, stack).value
         @renderList()
         @onChanged @list
 
@@ -162,7 +167,11 @@ Edit
              @$.elems.items.push @div ".property-value", null
 
         for v, i in @list
-         @property.item.edit @elems.items[i], v, @itemChanged.bind self: this, idx: i
+         stack = @stack.slice 0
+         stack.push i
+         @property.item.edit @elems.items[i], v,
+          @itemChanged.bind self: this, idx: i
+          stack
 
        itemChanged: (value, changed) ->
         if changed
