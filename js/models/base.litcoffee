@@ -100,7 +100,7 @@ Check properties
 
         extra = []
         for k of this.prototype
-         continue if k is 'on'
+         continue if k in ['on', 'values']
          if not mentioned[k]?
           if k[0] isnt '_'
            extra.push k
@@ -109,6 +109,10 @@ Check properties
          console.error type, extra
 
         @::_checked = true
+
+Get values
+
+       @::__defineGetter__ 'values', -> @_values
 
 
        constructor: ->
