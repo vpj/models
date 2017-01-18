@@ -22,7 +22,7 @@ Class
          throw new Error "Exected string: #{typeof str}, #{str}"
         return str
 
-       @default 'string', (value, stack) -> "#{str}"
+       @default 'string', (value, stack) -> "#{value}"
 
        @default 'rows', 1
        @default 'columns', 20
