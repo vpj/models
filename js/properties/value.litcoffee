@@ -17,7 +17,7 @@ Class
 
        propertyType: 'value'
 
-       @default 'value', (str, stack) ->
+       @default 'value', (str, stack, isData = false) ->
         if (typeof str) isnt 'string'
          throw new Error "Exected string: #{typeof str}, #{str}"
         return str
@@ -49,7 +49,7 @@ Class
         return {
          score: 1
          errors: []
-         value: @schema.value data, stack
+         value: @schema.value data, stack, true
         }
 
        toJSON: (value, stack) -> value
