@@ -96,7 +96,7 @@ Edit
            display: 'none'
            width: "#{width}px"
 
-        @elems.input.value = @value
+        @elems.input.value = schema.string @value, @stack
         @elems.input.addEventListener "input", @on.change
         @elems.input.addEventListener "focus", @on.focus
         @elems.input.addEventListener "blur", @on.blur
