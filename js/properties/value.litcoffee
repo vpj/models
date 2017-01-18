@@ -27,7 +27,7 @@ Class
        @default 'rows', 1
        @default 'columns', 20
 
-       @default 'valid', (str, stack) ->
+       @default 'valid', (str, stack, isData = false) ->
         if (typeof str) isnt 'string'
          return false
         else
@@ -43,7 +43,7 @@ Class
        parse: (data, stack) ->
         r = super data, stack
         return r unless r is true
-        if not @schema.valid data, stack
+        if not @schema.valid data, stack, true
          return @error 'invalid'
 
         return {
