@@ -15,6 +15,7 @@ Mod.require 'Models.Models',
 
    @property 'name', {}
    @property 'role',
+    default: -> 'Vigilante'
     valid: (str) -> ROLES[str]
     search: (str) ->
      str = str.toLowerCase()
