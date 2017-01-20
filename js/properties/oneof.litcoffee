@@ -30,7 +30,9 @@ Class
        @default 'isDefault', (value) ->
         return true if @schema.oneof.length is 0
         model = new (MODELS.get @schema.oneof[0])
-        model.parse value
+        res = model.parse value
+        if res.score isnt 1
+         return false
         model.isDefault()
 
        @isValidSchema: (schema) ->
@@ -89,9 +91,9 @@ Edit
        @listen 'typeChange', (e) ->
         type = @elems.type.value
         return if type is @model.type
-        json = @model.toJSON stack
+        json = @model.toJSON @stack
         @model = new (MODELS.get type)
-        r = @model.parse json, stack
+        r = @model.parse json, @stack
         @onChanged @model, true
         @renderModel()
 
