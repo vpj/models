@@ -85,6 +85,10 @@ Edit
       class Edit extends EditBase
        @extend()
 
+       @initialize (property, elem, value, onChanged, stack) ->
+        @list = value
+        @render()
+
        render: ->
         Weya elem: @elems.parent, context: this, ->
          @div ".list-controls", ->
@@ -158,10 +162,11 @@ Edit
             @div ".property.property-type-#{@$.property.item.propertyType}", ->
              @$.elems.items.push @div ".property-value", null
 
+        @_editProperties = []
         for v, i in @list
          stack = @stack.slice 0
          stack.push i
-         @property.item.edit @elems.items[i], v,
+         @_editProperties.push @property.item.edit @elems.items[i], v,
           @itemChanged.bind self: this, idx: i
           stack
 
@@ -169,6 +174,16 @@ Edit
         if changed
          @self.list[@idx] = value
         @self.onChanged @self.list, false
+
+       validate: ->
+        for edit in @_editProperties
+         return false if not edit.validate()
+        return true
+
+       destroy: ->
+        for edit in @_editProperties
+         edit.destroy()
+
 
 
 

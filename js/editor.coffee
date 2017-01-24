@@ -58,6 +58,11 @@ Mod.require 'Weya.Base',
     @elems.structured.innerHTML = ''
     @model.edit @elems.structured, @on.structuredChange
 
+   validate: ->
+    if @_editMode isnt 'structured'
+     @structured()
+    @model.validate()
+
    getModel: -> @model
    setJSON: (json) ->
     @_loadJSON json

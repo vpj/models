@@ -4,7 +4,8 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 #Properties Base
 
     Mod.require 'Models.Util',
-     (UTIL) ->
+     'Weya.Base'
+     (UTIL, WeyaBase) ->
 
 
 Class
@@ -81,17 +82,16 @@ Error helper
       class EditBase extends WeyaBase
        @extend()
 
-       @initialize (property, elem, value, changed, stack) ->
+       @initialize (property, elem, value, onChanged, stack) ->
         @property = property
         @elems =
          parent: elem
-        @value = value
         @onChanged = onChanged
         @stack = stack
-        @render()
 
-       render: -> throw new Error "Property render unimplemented"
-       validate: -> throw new Error "Property validate unimplemented"
+       render: -> throw new Error "Property editor render unimplemented"
+       validate: -> throw new Error "Property editor validate unimplemented"
+       destroy: -> throw new Error "Property editor destroy unimplemented"
 
 
 

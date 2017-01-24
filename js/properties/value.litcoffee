@@ -64,6 +64,10 @@ Edit
       class Edit extends EditBase
        @extend()
 
+       @initialize (property, elem, value, onChanged, stack) ->
+        @value = value
+        @render()
+
        render: ->
         schema = @property.schema
         width = 2 + Math.round schema.columns * 7.25
@@ -145,6 +149,15 @@ Edit
          @elems.input.classList.remove 'invalid'
          value = @property.schema.value.call this, value, @stack
          @onChanged value, true
+
+       validate: ->
+        value = @elems.input.value
+        if not @property.schema.valid.call @property, value, @stack
+         return false
+        else
+         return true
+
+       destroy: ->
 
 
 

@@ -5,10 +5,10 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
+     'Models.Property.EditBase'
      'Models.Models'
-     'Weya.Base'
      'Weya'
-     (PROPERTIES, Base, MODELS, WeyaBase, Weya) ->
+     (PROPERTIES, Base, EditBase, MODELS, Weya) ->
 
 
 Class
@@ -62,16 +62,11 @@ Class
 
 Edit
 
-      class Edit extends WeyaBase
+      class Edit extends EditBase
        @extend()
 
        @initialize (property, elem, value, onChanged, stack) ->
-        @property = property
-        @elems =
-         parent: elem
         @model = value
-        @onChanged = onChanged
-        @stack = stack
         @render()
 
        render: ->
@@ -106,6 +101,12 @@ Edit
 
        modelChanged: (value) ->
         @onChanged value, false
+
+       validate: ->
+        @model.validate()
+
+       destroy: ->
+        @model.unedit()
 
 
 

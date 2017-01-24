@@ -143,6 +143,8 @@ Get values
         'toJSONFull': 'To JSON Full'
         'isDefault': 'Is default value'
         'edit': 'Render editor'
+        'unedit': 'Destroy editor'
+        'validate': 'Validate if the values in editor are correct'
         'valueChanged': 'A property value change event'
 
 ##Public functions
@@ -247,6 +249,9 @@ Get values
           stack
 
        unedit: ->
+        return if not @_editProperties?
+        for name, edit of @_editProperties
+         edit.unedit()
         @_editElems = null
         @_editProperties = null
 
