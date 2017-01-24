@@ -45,6 +45,7 @@ Mod.require 'Weya.Base',
     json = @model.toJSON()
     text = YAML.stringify json, 10
     @editor.setValue text
+    @model.unedit()
 
    structured: ->
     @_editMode = 'structured'

@@ -234,6 +234,7 @@ Get values
         stack.push this
         @onChanged = changed
         @_editElems = {}
+        @_editProperties = {}
         Weya elem: elem, context: this, ->
          for name, prop of @$._properties
           @div ".property.property-type-#{prop.propertyType}", ->
@@ -241,9 +242,21 @@ Get values
            @$._editElems[name] = @div ".property-value", ""
 
         for name, prop of @_properties
-         prop.edit @_editElems[name], @_values[name],
+         @_editProperties[name] = prop.edit @_editElems[name], @_values[name],
           @valueChanged.bind self: this, name: name
           stack
+
+       unedit: ->
+        @_editElems = null
+        @_editProperties = null
+
+       validate: ->
+        return null if not @_editProperties?
+
+        for name, edit of @_editProperties
+         return false if not edit.validate()
+
+        return true
 
        valueChanged: (value, changed) ->
         @self._values[@name] = value
