@@ -77,4 +77,23 @@ Error helper
 
 
 
+
+      class EditBase extends WeyaBase
+       @extend()
+
+       @initialize (property, elem, value, changed, stack) ->
+        @property = property
+        @elems =
+         parent: elem
+        @value = value
+        @onChanged = onChanged
+        @stack = stack
+        @render()
+
+       render: -> throw new Error "Property render unimplemented"
+       validate: -> throw new Error "Property validate unimplemented"
+
+
+
       Mod.set 'Models.Property.Base', Base
+      Mod.set 'Models.Property.EditBase', EditBase

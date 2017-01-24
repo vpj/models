@@ -5,9 +5,9 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
-     'Weya.Base'
+     'Models.Property.EditBase'
      'Weya'
-     (PROPERTIES, Base, WeyaBase, Weya) ->
+     (PROPERTIES, Base, EditBase, Weya) ->
 
 
 Class
@@ -61,17 +61,8 @@ Class
 
 Edit
 
-      class Edit extends WeyaBase
+      class Edit extends EditBase
        @extend()
-
-       @initialize (property, elem, value, onChanged, stack) ->
-        @property = property
-        @elems =
-         parent: elem
-        @value = value
-        @onChanged = onChanged
-        @stack = stack
-        @render()
 
        render: ->
         schema = @property.schema
