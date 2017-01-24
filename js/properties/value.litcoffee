@@ -153,8 +153,10 @@ Edit
        validate: ->
         value = @elems.input.value
         if not @property.schema.valid.call @property, value, @stack
+         @elems.input.classList.add 'invalid'
          return false
         else
+         @elems.input.classList.remove 'invalid'
          return true
 
        destroy: ->
