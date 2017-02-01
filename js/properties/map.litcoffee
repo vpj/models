@@ -124,7 +124,7 @@ Edit
          value: (@property.item.parse null).value
         @mapList()
         @renderList()
-        @onChanged @map, true
+        @onChanged @map, false
 
        @listen 'listClick',(e) ->
         n = e.target
@@ -146,12 +146,14 @@ Edit
 
         @mapList()
         @renderList()
-        @onChanged @map, true
+        @onChanged @map, false
 
        mapList: ->
-        @map = {}
+        keys = (k for k of @map)
+        for k in keys
+         delete @map[k]
         for obj in @list
-         continue if not @map[obj.key]?
+         continue if @map[obj.key]?
          @map[obj.key] = obj.value
 
        renderList: ->
@@ -170,11 +172,14 @@ Edit
               icon.listIdx = i
               icon.listAction = 'delete'
            @div ".list-item-content", ->
-            @$.elems.keys.push @input '.value',
-             type: 'text'
-             placeholder: 'Key'
-             style:
-              width: "20px"
+            @div ".property.property-type-value", ->
+             @span ".property-name", 'Key'
+             @div ".property-value", ->
+              @$.elems.keys.push @input '.value',
+               type: 'text'
+               placeholder: 'Key'
+               style:
+                width: "20px"
             @div ".property.property-type-#{@$.property.item.propertyType}", ->
              @$.elems.items.push @div ".property-value", null
 
@@ -192,7 +197,7 @@ Edit
          elem.classList.remove 'invalid'
          @self.list[@idx].key = key
          @self.mapList()
-         @self.onChanged @self.map, true
+         @self.onChanged @self.map, false
 
        itemChanged: (value, changed) ->
         if changed

@@ -101,11 +101,18 @@ Mod.require 'Models.Models',
          for e in education
           e.weya this
 
-       if values.skills.length > 0
+       skills = ([k, v] for k, v of values.skills)
+       if skills.length > 0
         @div ".skills", ->
          @h2 "Skills"
-         for e in values.skills
-          e.weya this
+         for e in skills
+          @div ".skill.row", ->
+           @div ".columns.six.skill-name", "#{e[0]}"
+           @div ".columns.six.skill-level", ->
+            for i in [0...e[1]]
+             @i ".fa.fa-circle.filled", null
+            for i in [0...10 - e[1]]
+             @i ".fa.fa-circle.unfilled", null
 
 
       @div ".six.columns", ->
@@ -245,38 +252,4 @@ Mod.require 'Models.Models',
 
 
   MODELS.register 'Recognition', Recognition
-
-  class Skill extends Base
-   @extend()
-
-   type: 'Skill'
-
-   @property 'level',
-    columns: 5
-    valid: (str) ->
-     n = parseInt str
-     return false if "#{n}" isnt "#{str}"
-     if 0 <= n <= 10
-      return true
-     else
-      return false
-    value: (str) -> parseInt str
-    default: -> 10
-   @property 'skill', {}
-
-   template: (self) ->
-    values = self._values
-
-    @div ".skill.row", ->
-     @div ".columns.six.skill-name", "#{values.skill}"
-     @div ".columns.six.skill-level", ->
-      for i in [0...values.level]
-       @i ".fa.fa-circle.filled", null
-      for i in [0...10 - values.level]
-       @i ".fa.fa-circle.unfilled", null
-
-   @check()
-
-
-  MODELS.register 'Skill', Skill
 
