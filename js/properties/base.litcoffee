@@ -1,10 +1,11 @@
 Copyright 2014 - 2015
 Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
-#List
+#Properties Base
 
     Mod.require 'Models.Util',
-     (UTIL) ->
+     'Weya.Base'
+     (UTIL, WeyaBase) ->
 
 
 Class
@@ -26,6 +27,13 @@ Class
 
         return true
 
+       @default 'required', false
+       @default 'default', -> null
+       @default 'isDefault', (value) ->
+        return true if not value?
+        return false
+
+
        constructor: (schema, name) ->
         @_name = name
         @schema = {}
@@ -36,6 +44,19 @@ Class
          else
           @schema[k] = v
 
+Abstract methods
+
+       toJSON: (value, stack) ->
+        throw new Error "#{@propertyType}: toJSON not implementaed"
+
+       toJSONFULL: (value, stack) ->
+        throw new Error "#{@propertyType}: toJSONFULL not implementaed"
+
+       edit: (elem, value, onChanged, stack) ->
+        throw new Error "#{@propertyType}: edit not implementaed"
+
+Error helper
+
        error: (error) ->
         return {
          score: 0
@@ -43,7 +64,7 @@ Class
          errors: [error]
         }
 
-       parse: (data) ->
+       parse: (data, stack) ->
         if not data?
          if @schema.required
           return (@error 'required')
@@ -52,15 +73,27 @@ Class
 
         return true
 
-       @default 'required', false
-       @default 'default', -> null
-       @default 'isDefault', (value) ->
-        return true if not value?
-        return false
+       isDefault: (value, stack) ->
+        @schema.isDefault.call this, value, stack
 
-       isDefault: (value) ->
-        @schema.isDefault.call this, value
+
+
+
+      class EditBase extends WeyaBase
+       @extend()
+
+       @initialize (property, elem, value, onChanged, stack) ->
+        @property = property
+        @elems =
+         parent: elem
+        @onChanged = onChanged
+        @stack = stack
+
+       render: -> throw new Error "Property editor render unimplemented"
+       validate: -> throw new Error "Property editor validate unimplemented"
+       destroy: -> throw new Error "Property editor destroy unimplemented"
 
 
 
       Mod.set 'Models.Property.Base', Base
+      Mod.set 'Models.Property.EditBase', EditBase

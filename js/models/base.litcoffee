@@ -1,7 +1,7 @@
 Copyright 2014 - 2015
 Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
-#List
+#Model Base
 
     Mod.require 'Weya',
      'Models.Properties'
@@ -100,7 +100,7 @@ Check properties
 
         extra = []
         for k of this.prototype
-         continue if k is 'on'
+         continue if k in ['on', 'values']
          if not mentioned[k]?
           if k[0] isnt '_'
            extra.push k
@@ -109,6 +109,10 @@ Check properties
          console.error type, extra
 
         @::_checked = true
+
+Get values
+
+       @::__defineGetter__ 'values', -> @_values
 
 
        constructor: ->
@@ -139,11 +143,15 @@ Check properties
         'toJSONFull': 'To JSON Full'
         'isDefault': 'Is default value'
         'edit': 'Render editor'
+        'unedit': 'Destroy editor'
+        'validate': 'Validate if the values in editor are correct'
         'valueChanged': 'A property value change event'
 
 ##Public functions
 
-       parse: (data) ->
+       parse: (data, stack = []) ->
+        stack = stack.slice 0
+        stack.push this
         excess = 0
         @_errors = []
         fields = 0
@@ -157,9 +165,9 @@ Check properties
 
         for name, prop of @_properties
          fields++
-         r = prop.parse data[name]
+         r = prop.parse data[name], stack
          @_values[name] = r.value
-         if not prop.isDefault r.value
+         if not prop.isDefault r.value, stack
           @_score += r.score
          for e in r.errors
           @_errors.push "#{name}(#{@type})/#{e}"
@@ -178,48 +186,57 @@ Check properties
          errors: @_errors
         }
 
-       weya: (weya) ->
-        @template.call weya, this
+       weya: (weya, stack = []) ->
+        @template.call weya, this, stack
 
-       render: (elem) ->
+       render: (elem, stack = []) ->
         self = this
         Weya elem: elem, ->
-         self.weya this
+         self.weya this, stack
 
-       html: ->
+       html: (stack = []) ->
         self = this
         Weya.markup {}, ->
-         self.weya this
+         self.weya this, stack
 
-       toJSON: ->
+       toJSON: (stack = [])->
+        stack = stack.slice 0
+        stack.push this
         data = {}
         for name, prop of @_properties
-         v = prop.toJSON @_values[name]
-         if not prop.isDefault v
+         v = prop.toJSON @_values[name], stack
+         if not prop.isDefault v, stack
           data[name] = v
 
 
         return data
 
-       toJSONFull: ->
+       toJSONFull: (stack = []) ->
+        stack = stack.slice 0
+        stack.push this
         data = {}
         for name, prop of @_properties
-         data[name] = prop.toJSONFull @_values[name]
+         data[name] = prop.toJSONFull @_values[name], stack
 
         return data
 
 
-       isDefault: ->
+       isDefault: (stack = []) ->
+        stack = stack.slice 0
+        stack.push this
         for name, prop of @_properties
          v = prop.toJSON @_values[name]
-         if not prop.isDefault v
+         if not prop.isDefault v, stack
           return false
 
         return true
 
-       edit: (elem, changed) ->
+       edit: (elem, changed, stack = []) ->
+        stack = stack.slice 0
+        stack.push this
         @onChanged = changed
         @_editElems = {}
+        @_editProperties = {}
         Weya elem: elem, context: this, ->
          for name, prop of @$._properties
           @div ".property.property-type-#{prop.propertyType}", ->
@@ -227,8 +244,24 @@ Check properties
            @$._editElems[name] = @div ".property-value", ""
 
         for name, prop of @_properties
-         prop.edit @_editElems[name], @_values[name],
+         @_editProperties[name] = prop.edit @_editElems[name], @_values[name],
           @valueChanged.bind self: this, name: name
+          stack
+
+       unedit: ->
+        return if not @_editProperties?
+        for name, edit of @_editProperties
+         edit.unedit()
+        @_editElems = null
+        @_editProperties = null
+
+       validate: ->
+        return null if not @_editProperties?
+
+        for name, edit of @_editProperties
+         return false if not edit.validate()
+
+        return true
 
        valueChanged: (value, changed) ->
         @self._values[@name] = value

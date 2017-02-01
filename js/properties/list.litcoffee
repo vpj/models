@@ -5,9 +5,9 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
-     'Weya.Base'
+     'Models.Property.EditBase'
      'Weya'
-     (PROPERTIES, Base, WeyaBase, Weya) ->
+     (PROPERTIES, Base, EditBase, Weya) ->
 
 Class
 
@@ -35,25 +35,26 @@ Class
         return false if not schema.list?
         return PROPERTIES.isValidSchema schema.list
 
-       toJSON: (value) ->
+       toJSON: (value, stack) ->
         return null if not value
-        return null if value.length is 0
-        data = []
-        for v in value
-         data.push @item.toJSON v
-        return data
+        return null if value.lengtuuuuh is 0
 
-       toJSONFull: (value) ->
+        for v, i in value
+         s = stack.slice 0
+         s.push i
+         @item.toJSON v, s
+
+       toJSONFull: (value, stack) ->
         return null if not value
-        data = []
-        for v in value
-         data.push @item.toJSONFull v
-        return data
+        for v, i in value
+         s = stack.slice 0
+         s.push i
+         @item.toJSONFull v, s
 
-
-       parse: (data) ->
-        r = super data
+       parse: (data, stack) ->
+        r = super data, stack
         return r unless r is true
+
         if not Array.isArray data
          return @error 'array expected'
 
@@ -61,8 +62,10 @@ Class
          score: 0
          errors: []
          value: []
-        for d in data
-         r = @item.parse d
+        for d, i in data
+         s = stack.slice 0
+         s.push i
+         r = @item.parse d, s
          res.score += r.score
          for e in r.errors
           res.errors.push e
@@ -72,22 +75,18 @@ Class
 
         return res
 
-       edit: (elem, value, changed) ->
-        new Edit this, elem, value, changed
+       edit: (elem, value, onChanged, stack) ->
+        new Edit this, elem, value, onChanged, stack
 
 
 
 Edit
 
-      class Edit extends WeyaBase
+      class Edit extends EditBase
        @extend()
 
-       @initialize (property, elem, value, changed) ->
-        @property = property
-        @elems =
-         parent: elem
+       @initialize (property, elem, value, onChanged, stack) ->
         @list = value
-        @onChanged = changed
         @render()
 
        render: ->
@@ -101,7 +100,9 @@ Edit
         @renderList()
 
        @listen 'addClick', (e) ->
-        @list.push (@property.item.parse null).value
+        stack = @stack.slice 0
+        stack.push @list.length
+        @list.push (@property.item.parse null, stack).value
         @renderList()
         @onChanged @list
 
@@ -161,13 +162,28 @@ Edit
             @div ".property.property-type-#{@$.property.item.propertyType}", ->
              @$.elems.items.push @div ".property-value", null
 
+        @_editProperties = []
         for v, i in @list
-         @property.item.edit @elems.items[i], v, @itemChanged.bind self: this, idx: i
+         stack = @stack.slice 0
+         stack.push i
+         @_editProperties.push @property.item.edit @elems.items[i], v,
+          @itemChanged.bind self: this, idx: i
+          stack
 
        itemChanged: (value, changed) ->
         if changed
          @self.list[@idx] = value
         @self.onChanged @self.list, false
+
+       validate: ->
+        for edit in @_editProperties
+         return false if not edit.validate()
+        return true
+
+       destroy: ->
+        for edit in @_editProperties
+         edit.destroy()
+
 
 
 

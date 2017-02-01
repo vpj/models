@@ -1,13 +1,13 @@
 Copyright 2014 - 2015
 Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
-#List
+#Value
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
-     'Weya.Base'
+     'Models.Property.EditBase'
      'Weya'
-     (PROPERTIES, Base, WeyaBase, Weya) ->
+     (PROPERTIES, Base, EditBase, Weya) ->
 
 
 Class
@@ -17,59 +17,55 @@ Class
 
        propertyType: 'value'
 
-       @default 'value', (str) ->
+       @default 'value', (str, stack, isData = false) ->
         if (typeof str) isnt 'string'
          throw new Error "Exected string: #{typeof str}, #{str}"
         return str
 
-       @default 'string', (value) -> "#{str}"
+       @default 'string', (value, stack) -> "#{value}"
 
        @default 'rows', 1
        @default 'columns', 20
 
-       @default 'valid', (str) ->
+       @default 'valid', (str, stack, isData = false) ->
         if (typeof str) isnt 'string'
          return false
         else
          return true
 
-       @default 'search', (str) -> null
+       @default 'search', (str, stack) -> null
 
        @default 'default', -> ''
 
-       @default 'isDefault', (value) -> (value is @schema.default())
+       @default 'isDefault', (value, stack) ->
+        value is @schema.default()
 
-       parse: (data) ->
-        r = super data
+       parse: (data, stack) ->
+        r = super data, stack
         return r unless r is true
-        if not @schema.valid data
+        if not @schema.valid data, stack, true
          return @error 'invalid'
 
-        res =
+        return {
          score: 1
          errors: []
-         value: @schema.value data
+         value: @schema.value data, stack, true
+        }
 
-        return res
+       toJSON: (value, stack) -> value
+       toJSONFull: (value, stack) -> value
 
-       toJSON: (value) -> value
-       toJSONFull: (value) -> value
-
-       edit: (elem, value, changed) ->
-        new Edit this, elem, value, changed
+       edit: (elem, value, onChanged, stack) ->
+        new Edit this, elem, value, onChanged, stack
 
 
 Edit
 
-      class Edit extends WeyaBase
+      class Edit extends EditBase
        @extend()
 
-       @initialize (property, elem, value, changed) ->
-        @property = property
-        @elems =
-         parent: elem
+       @initialize (property, elem, value, onChanged, stack) ->
         @value = value
-        @onChanged = changed
         @render()
 
        render: ->
@@ -95,7 +91,7 @@ Edit
            display: 'none'
            width: "#{width}px"
 
-        @elems.input.value = @value
+        @elems.input.value = schema.string @value, @stack
         @elems.input.addEventListener "input", @on.change
         @elems.input.addEventListener "focus", @on.focus
         @elems.input.addEventListener "blur", @on.blur
@@ -104,7 +100,7 @@ Edit
 
        search: ->
         value = @elems.input.value
-        results = @property.schema.search.call @property, value
+        results = @property.schema.search.call @property, value, @stack
         return if not results?
         return if not Array.isArray results
 
@@ -147,12 +143,23 @@ Edit
 
        change: ->
         value = @elems.input.value
-        if not @property.schema.valid.call @property, value
+        if not @property.schema.valid.call @property, value, @stack
          @elems.input.classList.add 'invalid'
         else
          @elems.input.classList.remove 'invalid'
-         value = @property.schema.value.call this, value
+         value = @property.schema.value.call this, value, @stack
          @onChanged value, true
+
+       validate: ->
+        value = @elems.input.value
+        if not @property.schema.valid.call @property, value, @stack
+         @elems.input.classList.add 'invalid'
+         return false
+        else
+         @elems.input.classList.remove 'invalid'
+         return true
+
+       destroy: ->
 
 
 

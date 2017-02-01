@@ -5,10 +5,10 @@ Author: Varuna Jayasiri http://blog.varunajayasiri.com
 
     Mod.require 'Models.Properties',
      'Models.Property.Base'
+     'Models.Property.EditBase'
      'Models.Models'
-     'Weya.Base'
      'Weya'
-     (PROPERTIES, Base, MODELS, WeyaBase, Weya) ->
+     (PROPERTIES, Base, EditBase, MODELS, Weya) ->
 
 
 Class
@@ -30,7 +30,9 @@ Class
        @default 'isDefault', (value) ->
         return true if @schema.oneof.length is 0
         model = new (MODELS.get @schema.oneof[0])
-        model.parse value
+        res = model.parse value
+        if res.score isnt 1
+         return false
         model.isDefault()
 
        @isValidSchema: (schema) ->
@@ -38,40 +40,33 @@ Class
         return false if not schema.oneof?
         return true
 
-       parse: (data) ->
-        r = super data
+       parse: (data, stack) ->
+        r = super data, stack
         return r unless r is true
 
-        res =
-         score: 0
-         errors: ['invalid']
-         value: @schema.default.call this
+        res = @error 'invalid'
         for type in @schema.oneof
          m = new (MODELS.get type)
-         r = m.parse data
+         r = m.parse data, stack
          if res.score < r.score
           res = r
 
         return res
 
-       toJSON: (value) -> value.toJSON()
-       toJSONFull: (value) -> value.toJSONFull()
+       toJSON: (value, stack) -> value.toJSON stack
+       toJSONFull: (value, stack) -> value.toJSONFull stack
 
-       edit: (elem, value, changed) ->
-        new Edit this, elem, value, changed
+       edit: (elem, value, onChanged, stack) ->
+        new Edit this, elem, value, onChanged, stack
 
 
 Edit
 
-      class Edit extends WeyaBase
+      class Edit extends EditBase
        @extend()
 
-       @initialize (property, elem, value, changed) ->
-        @property = property
-        @elems =
-         parent: elem
+       @initialize (property, elem, value, onChanged, stack) ->
         @model = value
-        @onChanged = changed
         @render()
 
        render: ->
@@ -91,19 +86,27 @@ Edit
        @listen 'typeChange', (e) ->
         type = @elems.type.value
         return if type is @model.type
-        json = @model.toJSON()
+        json = @model.toJSON @stack
         @model = new (MODELS.get type)
-        r = @model.parse json
+        r = @model.parse json, @stack
         @onChanged @model, true
         @renderModel()
 
        renderModel: ->
         @elems.model.innerHTML = ''
         @elems.type.value = @model.type
-        @model.edit @elems.model, @modelChanged.bind this
+        @model.edit @elems.model,
+         @modelChanged.bind this
+         @stack
 
        modelChanged: (value) ->
         @onChanged value, false
+
+       validate: ->
+        @model.validate()
+
+       destroy: ->
+        @model.unedit()
 
 
 
