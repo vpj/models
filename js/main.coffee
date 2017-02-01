@@ -50,20 +50,12 @@ Mod.require 'Weya.Base',
          role: 'Team Member'
        }
      ]
-     skills: [
-       {
-         skill: 'Detective'
-       }, {
-         skill: 'Martial arts'
-       }, {
-         level: 8
-         skill: 'Chemistry'
-       }, {
-         skill: 'Criminology'
-       }, {
-         skill: 'Forensics'
-       }
-     ]
+     skills:
+      Detective: 10
+      'Martial arts': 10
+      Chemistry: 8
+      Criminology: 10
+      Forensics: 10
 
    @listen 'resize', ->
     @editor.resize
