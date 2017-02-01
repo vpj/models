@@ -38,8 +38,17 @@ Mod.require 'Models.Models',
      defaultValues: -> {from: '2010', to: '2020'}
 
    @property 'skills',
-    list:
-     oneof: ['Skill']
+    map:
+     columns: 5
+     valid: (str) ->
+      n = parseInt str
+      return false if "#{n}" isnt "#{str}"
+      if 0 <= n <= 10
+       return true
+      else
+       return false
+     value: (str) -> parseInt str
+     default: -> 10
 
    _education: ->
     res = (e for e in @_values.timeline when e.type is 'Education')

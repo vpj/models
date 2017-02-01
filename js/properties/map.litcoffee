@@ -18,7 +18,9 @@ Class
 
        @default 'map', {}
        @default 'validKey', (key) ->
-        return ((typeof key) is 'string')
+        return false if (typeof key) isnt 'string'
+        return false if key.trim().length is 0
+        return true
 
        @default 'default', -> {}
        @default 'isDefault', (value) ->
@@ -118,7 +120,7 @@ Edit
 
        @listen 'addClick', (e) ->
         @list.push
-         key: 'empty'
+         key: ''
          value: (@property.item.parse null).value
         @mapList()
         @renderList()
@@ -179,23 +181,23 @@ Edit
         for v, i in @list
          @property.item.edit @elems.items[i], v.value, @itemChanged.bind self: this, idx: i
          @elems.keys[i].value = v.key
-         @elems.keys[i].addEventListener 'input', @on.keyChanged.bind self: this, idx: i
+         @elems.keys[i].addEventListener 'input', @keyChanged.bind self: this, idx: i
 
        keyChanged: ->
         elem = @self.elems.keys[@idx]
-        key = elem.value
-        if @property.schema.validKey.call @property, key
-         @elems.input.classList.add 'invalid'
+        key = elem.value.trim()
+        if not @self.property.schema.validKey.call @property, key
+         elem.classList.add 'invalid'
         else
-         @elems.input.classList.remove 'invalid'
+         elem.classList.remove 'invalid'
          @self.list[@idx].key = key
          @self.mapList()
          @self.onChanged @self.map, true
 
        itemChanged: (value, changed) ->
         if changed
-         @self.list[@idx] = value
-        @self.map[@self.list[@idx].key] = value
+         @self.list[@idx].value = value
+         @self.map[@self.list[@idx].key] = value
         @self.onChanged @self.map, false
 
 
