@@ -14,6 +14,7 @@ UI_JS = [
  'samples/resume'
  'properties/base'
  'properties/list'
+ 'properties/map'
  'properties/oneof'
  'properties/properties'
  'properties/value'
